@@ -31,24 +31,28 @@ public class GameGUI extends JPanel implements KeyListener {
             g.setColor(Color.WHITE);
             g.drawString(String.valueOf(a.getA()), 50, 800);
 
-            int m1[][] = map.getMap();
-            for (int i = 0; i < m1.length; i++) {
-                for (int j = 0; j < m1[i].length; j++) {
+            int m[][] = map.getMap(state);
+            for (int i = 0; i < m.length; i++) {
+                for (int j = 0; j < m[i].length; j++) {
 
                     int xM = (j + 1) * 100;
                     int yM = (i + 1) * 100;
 
-                    if (m1[i][j] == 0) {
+                    if (m[i][j] == 0) {
                         g.drawImage(Wall, xM, yM, 100, 100, this);
-                    } else if (m1[i][j] == 1) {
+                    } 
+                    else if (m[i][j] == 1) {
                         g.drawRect(xM, yM, 100, 100);
                         g.setColor(Color.BLACK);
                         g.fillRect(xM, yM, 100, 100);
-                    } else if (m1[i][j] == 2) {
+                    } 
+                    else if (m[i][j] == 2) {
                         g.drawImage(Monster, xM, yM, 100, 100, this);
-                    } else if (m1[i][j] == 3) {
+                    } 
+                    else if (m[i][j] == 3) {
                         g.drawImage(Stone, xM, yM, 100, 100, this);
-                    } else if (m1[i][j] == 9) {
+                    } 
+                    else if (m[i][j] == 9) {
                         g.drawImage(Door, xM, yM, 100, 100, this);
                     }
 
@@ -79,19 +83,32 @@ public class GameGUI extends JPanel implements KeyListener {
             repaint();
         }
 
+        int[][] m = map.getMap(state);
+        int xP = (a.getX() / 100) - 1;
+        int yP = (a.getY() / 100) - 1;
+
         if (state > 0 && key == 'w' && a.getA() != 0) {
-            a.moveUp();
+            if (canWalk(xP, yP - 1, m)) {
+                a.moveUp();
+            }
             repaint();
         }
         else if (state > 0 && key == 's' && a.getA() != 0) {
-            a.moveDown();
+            if (canWalk(xP, yP + 1, m)) {
+                a.moveDown();
+            }
             repaint();
         } 
         else if (state > 0 && key == 'a' && a.getA() != 0) {
-            a.moveLeft();
+            if (canWalk(xP - 1, yP, m)) {
+                a.moveLeft();
+            }
+            repaint();
         } 
         else if (state > 0 && key == 'd' && a.getA() != 0) {
-            a.moveRight();
+            if (canWalk(xP + 1, yP, m)) {
+                a.moveRight();
+            }
             repaint();
         } 
         else if (state > 0 && a.getA() == 0) {
@@ -106,10 +123,17 @@ public class GameGUI extends JPanel implements KeyListener {
         }
     }
 
-    public boolean canWalk () {
+    public boolean canWalk (int x, int y, int[][] m) {
 
-
-        return false;
+        if (y < 0 || y >= m.length || x < 0 ||x >= m[0].length) {
+            return false;
+        }
+        else if (m[y][x] == 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @Override
