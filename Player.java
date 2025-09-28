@@ -46,4 +46,8 @@ public class Player {
         return a;
     }
 
+    public void Action() {
+        a--;
+    }
+
 }   
