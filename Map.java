@@ -20,7 +20,6 @@ public class Map {
     public Map() {}
 
     public int[][] getMap(int level) {
-        level--;
         return map[level];
     }
 
