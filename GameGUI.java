@@ -8,6 +8,7 @@ public class GameGUI extends JPanel implements KeyListener {
     private int over = 0;
     public Player a = new Player();
     private Map map = new Map();
+    private int m[][];
     private Image MainCharacter = new ImageIcon("src/MainCharacter.gif").getImage();
     private Image Wall = new ImageIcon("src/wall.Jpg").getImage();
     private Image Monster = new ImageIcon("src/monster.gif").getImage();
@@ -31,7 +32,6 @@ public class GameGUI extends JPanel implements KeyListener {
             g.setColor(Color.WHITE);
             g.drawString(String.valueOf(a.getA()), 50, 800);
 
-            int m[][] = map.getMap(state);
             for (int i = 0; i < m.length; i++) {
                 for (int j = 0; j < m[i].length; j++) {
 
@@ -78,39 +78,86 @@ public class GameGUI extends JPanel implements KeyListener {
         char key = e.getKeyChar();
 
         if (state == 0 && key == ' ') {
+            loadMap();
             state = 1;
-            a.setPlayer(700, 100, 23);
+            a.setPlayer(700, 100, 24);
             repaint();
         }
 
-        int[][] m = map.getMap(state);
         int xP = (a.getX() / 100) - 1;
         int yP = (a.getY() / 100) - 1;
 
         if (state > 0 && key == 'w' && a.getA() != 0) {
-            if (canWalk(xP, yP - 1, m)) {
+
+            int w = Walk(xP, yP - 1, m);
+
+            if (w == 1) {
                 a.moveUp();
             }
+            else if (w == 2 && m[yP - 1][xP] != 0) {
+                m[yP - 1][xP] = 0;
+            }
+            else if (w == 2 && m[yP - 1][xP] == 0) {
+                m[yP - 1][xP] = 0;
+                m[yP - 2][xP] = 2;
+            }
+
             repaint();
         }
+
         else if (state > 0 && key == 's' && a.getA() != 0) {
-            if (canWalk(xP, yP + 1, m)) {
+
+            int w = Walk(xP, yP + 1, m);
+
+            if (w == 1) {
                 a.moveDown();
             }
+            else if (w == 2 && m[yP][xP + 2] != 0) {
+                m[yP + 1][xP] = 0;
+            }
+            else if (w == 2 && m[yP][xP + 2] == 0) {
+                m[yP + 2][xP] = 0;
+                m[yP + 2][xP] = 2;
+            }
+
             repaint();
         } 
+
         else if (state > 0 && key == 'a' && a.getA() != 0) {
-            if (canWalk(xP - 1, yP, m)) {
+
+            int w = Walk(xP - 1, yP, m);
+
+            if (w == 1) {
                 a.moveLeft();
             }
+            else if (w == 2 && m[yP][xP - 2] != 0) {
+                m[yP][xP - 1] = 0;
+            }
+            else if (w == 2 && m[yP][xP - 2] == 0) {
+                m[yP][xP - 1] = 0;
+                m[yP][xP - 2] = 2;
+            }
+
             repaint();
-        } 
+        }
         else if (state > 0 && key == 'd' && a.getA() != 0) {
-            if (canWalk(xP + 1, yP, m)) {
+
+            int w = Walk(xP + 1, yP, m);
+
+            if (w == 1) {
                 a.moveRight();
             }
+            else if (w == 2 && m[yP][xP + 2] != 0) {
+                m[yP][xP + 1] = 0;
+            }
+            else if (w == 2 && m[yP][xP + 2] == 0) {
+                m[yP][xP + 1] = 0;
+                m[yP][xP + 2] = 2;
+            }
+
             repaint();
         } 
+        
         else if (state > 0 && a.getA() == 0) {
             over = 1;
             repaint();
@@ -118,22 +165,29 @@ public class GameGUI extends JPanel implements KeyListener {
 
         if (key == ' ' && over == 1 && state == 1) {
             over = 0;
-            a.setPlayer(700, 100, 23);
+            a.setPlayer(700, 100, 24);
             repaint();
         }
     }
 
-    public boolean canWalk (int x, int y, int[][] m) {
-
-        if (y < 0 || y >= m.length || x < 0 ||x >= m[0].length) {
-            return false;
+    public int Walk (int x, int y, int[][] m) {
+        // 0 = cann't walk
+        // 1 = can walk
+        // 2 = monster
+        if (y < 0 || y >= m.length || x < 0 || x >= m[0].length) {
+            return 0;
         }
         else if (m[y][x] == 0) {
-            return true;
+            return 1;
         }
-        else {
-            return false;
+        else if (m[y][x] == 2) {
+            return 2;
         }
+        return 0;
+    }
+
+    private void loadMap() {
+        m = map.getMap(state);
     }
 
     @Override
