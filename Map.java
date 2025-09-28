@@ -19,8 +19,9 @@ public class Map {
 
     public Map() {}
 
-    public int[][] getMap() {
-        return map[0];
+    public int[][] getMap(int level) {
+        level--;
+        return map[level];
     }
 
 }
